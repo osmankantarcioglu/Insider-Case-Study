@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football League Simulator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="main-content">
+            <div class="section">
+                <h2>League Table</h2>
+                <table id="league-table">
+                    <thead>
+                        <tr>
+                            <th>Teams</th>
+                            <th>PTS</th>
+                            <th>P</th>
+                            <th>W</th>
+                            <th>D</th>
+                            <th>L</th>
+                            <th>GD</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <!-- Table data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+                <div class="button-group">
+                    <button id="play-all" class="button">Play All</button>
+                    <button id="reset-league" class="button">Reset League</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Match Results</h2>
+                <div id="match-week-header"><!-- Week header will be populated by JavaScript --></div>
+                <div id="match-results">
+                    <!-- Match results will be populated by JavaScript -->
+                </div>
+                <button id="next-week" class="button">Next Week</button>
+            </div>
+
+            <div class="section prediction">
+                <h2 id="prediction-week-header"><!-- Prediction week header will be populated by JavaScript --></h2>
+                <div id="predictions">
+                    <!-- Predictions will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 

@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:latest
+    container_name: footballsim-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: footballsim
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - footballsim-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: footballsim-app
+    ports:
+      - "8081:8080"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: footballsim
+      DB_SSLMODE: disable
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - footballsim-network
+    volumes:
+      - ./utils/static:/app/utils/static
+
+volumes:
+  pgdata:
+
+networks:
+  footballsim-network:
+    driver: bridge 
