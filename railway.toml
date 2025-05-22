@@ -1,9 +1,9 @@
 [build]
 builder = "DOCKERFILE"
-dockerfilePath = "Dockerfile.railway"
+dockerfilePath = "Dockerfile.debug"
 
 [deploy]
-startCommand = "./main"
+startCommand = "./debug_app"
 healthcheckPath = "/api"
 healthcheckTimeout = 600
 restartPolicyType = "ON_FAILURE"

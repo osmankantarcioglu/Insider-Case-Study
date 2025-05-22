@@ -5,22 +5,32 @@ FROM golang:1.20-alpine AS builder
 WORKDIR /app
 
 # Install build dependencies
-RUN apk add --no-cache git
+RUN apk add --no-cache git bash
 
 # Copy go mod and sum files
 COPY go.mod go.sum ./
 
-# Download dependencies
-RUN go mod download
+# Download dependencies with verbose output
+RUN go mod download -x
 
 # Copy source code
 COPY . .
 
-# Print directory structure for debugging
-RUN find . -type f -name "*.go" | sort
+# Print directory structure and go version for debugging
+RUN echo "Go version:" && go version
+RUN echo "Directory structure:" && find . -type f -name "*.go" | sort
 
-# Build the application with verbose output
-RUN CGO_ENABLED=0 GOOS=linux go build -v -o main ./cmd
+# Check for syntax errors first
+RUN echo "Checking for syntax errors..."
+RUN go vet ./...
+
+# Verify packages
+RUN echo "Verifying packages..."
+RUN go list ./...
+
+# Build with detailed error output
+RUN echo "Building application..." && \
+    CGO_ENABLED=0 GOOS=linux go build -v -x -o main ./cmd
 
 # Runtime stage
 FROM alpine:latest
