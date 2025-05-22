@@ -89,13 +89,21 @@ func main() {
 		if os.Getenv("RAILWAY_ENVIRONMENT") != "" {
 			log.Println("Using hardcoded Railway PostgreSQL connection info")
 			
-			// Get password from environment variable
-			password := os.Getenv("DB_PASSWORD")
+			// Get password from environment variable - try multiple possible names
+			password := ""
+			passwordEnvVars := []string{"DB_PASSWORD", "PGPASSWORD", "POSTGRES_PASSWORD"}
+			
+			for _, envVar := range passwordEnvVars {
+				if p := os.Getenv(envVar); p != "" {
+					password = p
+					log.Printf("Found password in %s environment variable", envVar)
+					break
+				}
+			}
+			
 			if password == "" {
-				password = "password" // Fallback, but this won't work
-				log.Println("WARNING: DB_PASSWORD environment variable not set!")
-			} else {
-				log.Println("Found DB_PASSWORD in environment variables")
+				password = "postgres" // Try default password
+				log.Println("WARNING: No password environment variable found! Trying default 'postgres'")
 			}
 			
 			dbConfig = &SimpleDBConfig{
@@ -104,7 +112,7 @@ func main() {
 				User:     "postgres",
 				Password: password,
 				DBName:   "railway",
-				SSLMode:  "prefer", // Try different SSL modes: prefer, require, disable
+				SSLMode:  "disable", // Changed from "prefer" to "disable" as "prefer" is not supported
 			}
 		} else {
 			// Local development fallback

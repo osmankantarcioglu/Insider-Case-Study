@@ -13,4 +13,5 @@ numReplicas = 1
 # Check in the Railway dashboard that your PostgreSQL service is linked to your app
 
 [variables]
+PGPASSWORD = "hSKIkxqgCLEmPPKkDqxdqRfJdGTTzZfI"
 DB_PASSWORD = "hSKIkxqgCLEmPPKkDqxdqRfJdGTTzZfI"
