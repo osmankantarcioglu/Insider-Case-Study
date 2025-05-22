@@ -12,16 +12,25 @@ import (
 
 // DBConfig contains the database configuration
 type DBConfig struct {
-	Host     string
-	Port     int
-	User     string
-	Password string
-	DBName   string
-	SSLMode  string
+	Host            string
+	Port            int
+	User            string
+	Password        string
+	DBName          string
+	SSLMode         string
+	ConnectionString string
+	UseDirectURL    bool
 }
 
 // GetConnectionString returns the connection string for the database
 func (c *DBConfig) GetConnectionString() string {
+	// If we have a direct connection string and UseDirectURL is true, use it
+	if c.UseDirectURL && c.ConnectionString != "" {
+		log.Println("Using direct database connection string")
+		return c.ConnectionString
+	}
+	
+	// Otherwise build the connection string from components
 	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
 		c.Host, c.Port, c.User, c.Password, c.DBName, c.SSLMode)
 	
@@ -63,6 +72,27 @@ func NewDBConfig() *DBConfig {
 
 // ConnectDB establishes a connection to the database
 func ConnectDB(config *DBConfig) (*sql.DB, error) {
+	if config.UseDirectURL {
+		log.Println("Connecting using direct database URL...")
+		// For direct URLs, we use sql.Open with the URL string directly
+		db, err := sql.Open("postgres", config.ConnectionString)
+		if err != nil {
+			log.Printf("Error opening database connection with URL: %v", err)
+			return nil, err
+		}
+		
+		log.Println("Pinging database to verify connection...")
+		err = db.Ping()
+		if err != nil {
+			log.Printf("Error pinging database: %v", err)
+			return nil, err
+		}
+		
+		log.Println("Successfully connected to database")
+		return db, nil
+	}
+	
+	// Original component-based connection logic
 	log.Printf("Attempting to connect to database at %s:%d...", config.Host, config.Port)
 	
 	db, err := sql.Open("postgres", config.GetConnectionString())
