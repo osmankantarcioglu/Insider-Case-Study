@@ -99,12 +99,12 @@ func main() {
 			}
 			
 			dbConfig = &SimpleDBConfig{
-				Host:     "postgres.railway.internal", // Railway's internal PostgreSQL hostname
+				Host:     "postgres", // Simplified hostname
 				Port:     5432,
-				User:     "postgres",                 // Default Railway PostgreSQL user
-				Password: password,                   // Use password from environment variable
-				DBName:   "railway",                  // Default Railway PostgreSQL database name
-				SSLMode:  "require",
+				User:     "postgres",
+				Password: password,
+				DBName:   "railway",
+				SSLMode:  "prefer", // Try different SSL modes: prefer, require, disable
 			}
 		} else {
 			// Local development fallback
