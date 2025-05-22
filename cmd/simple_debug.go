@@ -83,27 +83,52 @@ func main() {
 	
 	if !foundDBURL {
 		log.Println("No DATABASE_URL found with any case, checking for Railway variables...")
-		// Use individual variables or defaults
-		host := getEnv("PGHOST", "localhost")
-		user := getEnv("PGUSER", "postgres")
-		password := getEnv("PGPASSWORD", "postgres")
-		dbName := getEnv("PGDATABASE", "footballsim")
 		
-		// Determine SSL mode based on environment
-		var sslMode string
-		if os.Getenv("PGHOST") != "" && os.Getenv("PGHOST") != "localhost" {
-			sslMode = "require"  // Use SSL for remote connections
+		// RAILWAY DEPLOYMENT: Use hardcoded values for Railway deployment
+		// These values match Railway's PostgreSQL service
+		if os.Getenv("RAILWAY_ENVIRONMENT") != "" {
+			log.Println("Using hardcoded Railway PostgreSQL connection info")
+			
+			// Get password from environment variable
+			password := os.Getenv("DB_PASSWORD")
+			if password == "" {
+				password = "password" // Fallback, but this won't work
+				log.Println("WARNING: DB_PASSWORD environment variable not set!")
+			} else {
+				log.Println("Found DB_PASSWORD in environment variables")
+			}
+			
+			dbConfig = &SimpleDBConfig{
+				Host:     "postgres.railway.internal", // Railway's internal PostgreSQL hostname
+				Port:     5432,
+				User:     "postgres",                 // Default Railway PostgreSQL user
+				Password: password,                   // Use password from environment variable
+				DBName:   "railway",                  // Default Railway PostgreSQL database name
+				SSLMode:  "require",
+			}
 		} else {
-			sslMode = "disable"  // Disable for local development
-		}
-		
-		dbConfig = &SimpleDBConfig{
-			Host:     host,
-			Port:     5432,
-			User:     user,
-			Password: password,
-			DBName:   dbName,
-			SSLMode:  sslMode,
+			// Local development fallback
+			host := getEnv("PGHOST", "localhost")
+			user := getEnv("PGUSER", "postgres")
+			password := getEnv("PGPASSWORD", "postgres")
+			dbName := getEnv("PGDATABASE", "footballsim")
+			
+			// Determine SSL mode based on environment
+			var sslMode string
+			if os.Getenv("PGHOST") != "" && os.Getenv("PGHOST") != "localhost" {
+				sslMode = "require"  // Use SSL for remote connections
+			} else {
+				sslMode = "disable"  // Disable for local development
+			}
+			
+			dbConfig = &SimpleDBConfig{
+				Host:     host,
+				Port:     5432,
+				User:     user,
+				Password: password,
+				DBName:   dbName,
+				SSLMode:  sslMode,
+			}
 		}
 	}
 	
