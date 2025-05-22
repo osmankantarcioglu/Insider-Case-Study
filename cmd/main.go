@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -12,8 +13,17 @@ import (
 )
 
 func main() {
-	// Initialize database connection
-	dbConfig := database.NewDBConfig()
+	// Initialize database connection - use Railway config if available
+	var dbConfig *database.DBConfig
+	
+	// Check if running on Railway
+	if os.Getenv("RAILWAY_ENVIRONMENT") != "" || os.Getenv("PGHOST") != "" {
+		log.Println("Railway environment detected, using Railway database configuration")
+		dbConfig = database.NewRailwayDBConfig()
+	} else {
+		dbConfig = database.NewDBConfig()
+	}
+	
 	db, err := database.ConnectDB(dbConfig)
 	if err != nil {
 		log.Fatalf("Error connecting to database: %v", err)
@@ -65,8 +75,14 @@ func main() {
 		return c.SendString("Football League Simulator API - Use /api endpoints")
 	})
 
+	// Get port from environment variable for Railway deployment
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080" // Default port if not specified
+	}
+
 	// Start server
-	log.Println("Server starting on port 8080")
-	log.Println("Visit http://localhost:8080 to view the application")
-	log.Fatal(app.Listen(":8080"))
+	log.Printf("Server starting on port %s", port)
+	log.Printf("Visit http://localhost:%s to view the application", port)
+	log.Fatal(app.Listen(":" + port))
 } 
