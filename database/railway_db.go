@@ -72,6 +72,40 @@ func maskPassword(connString string) string {
 	if connString == "" {
 		return ""
 	}
-	// Simple masking, doesn't handle all cases but good enough for logs
-	return fmt.Sprintf("%s...masked...", connString[:10])
+	
+	// For safety, if the string is very short, don't try to mask it
+	if len(connString) < 20 {
+		return "[connection string present but too short to safely mask]"
+	}
+	
+	// Find the position of "@" which typically comes after the password
+	atPos := -1
+	for i := 0; i < len(connString); i++ {
+		if connString[i] == '@' {
+			atPos = i
+			break
+		}
+	}
+	
+	if atPos == -1 {
+		// No "@" found, use a generic mask
+		return connString[:10] + "...masked..."
+	}
+	
+	// Find the position of ":" which typically comes before the password
+	colonPos := -1
+	for i := atPos; i >= 0; i-- {
+		if connString[i] == ':' {
+			colonPos = i
+			break
+		}
+	}
+	
+	if colonPos == -1 || colonPos >= atPos-1 {
+		// No ":" found or it's right before "@", use a generic mask
+		return connString[:10] + "...masked..."
+	}
+	
+	// Mask the password part
+	return connString[:colonPos+1] + "[MASKED]" + connString[atPos:]
 }

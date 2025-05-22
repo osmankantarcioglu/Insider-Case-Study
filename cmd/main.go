@@ -13,17 +13,26 @@ import (
 )
 
 func main() {
-	// Initialize database connection - use Railway config if available
+	// Initialize database connection
 	var dbConfig *database.DBConfig
 	
-	// Check if running on Railway
-	if os.Getenv("RAILWAY_ENVIRONMENT") != "" || os.Getenv("PGHOST") != "" {
+	// First explicitly check for DATABASE_URL as this is what Railway provides
+	if dbURL := os.Getenv("DATABASE_URL"); dbURL != "" {
+		log.Println("Found DATABASE_URL environment variable, using for database connection")
+		dbConfig = &database.DBConfig{
+			ConnectionString: dbURL,
+			UseDirectURL:     true,
+		}
+	} else if os.Getenv("RAILWAY_ENVIRONMENT") != "" || os.Getenv("PGHOST") != "" {
+		// If no DATABASE_URL but other Railway environment variables exist
 		log.Println("Railway environment detected, using Railway database configuration")
 		dbConfig = database.NewRailwayDBConfig()
 	} else {
+		// Fallback to standard config
 		dbConfig = database.NewDBConfig()
 	}
 	
+	log.Printf("Connecting to database...")
 	db, err := database.ConnectDB(dbConfig)
 	if err != nil {
 		log.Fatalf("Error connecting to database: %v", err)
