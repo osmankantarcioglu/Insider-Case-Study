@@ -4,5 +4,10 @@ dockerfilePath = "Dockerfile.debug"
 
 [deploy]
 startCommand = "./simple_debug"
+healthcheckPath = "/"
 healthcheckTimeout = 600
 restartPolicyType = "ON_FAILURE"
+numReplicas = 1
+
+# Make sure the database service and DATABASE_URL is linked
+# Check in the Railway dashboard that your PostgreSQL service is linked to your app
