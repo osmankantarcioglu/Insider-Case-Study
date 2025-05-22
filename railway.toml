@@ -3,7 +3,6 @@ builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile.debug"
 
 [deploy]
-startCommand = "./debug_app"
-healthcheckPath = "/api"
+startCommand = "./simple_debug"
 healthcheckTimeout = 600
 restartPolicyType = "ON_FAILURE"

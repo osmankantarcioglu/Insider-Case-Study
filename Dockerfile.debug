@@ -1,4 +1,4 @@
-# Simple debugging Dockerfile
+# Simplified debugging Dockerfile
 FROM golang:1.20-alpine
 
 WORKDIR /app
@@ -6,19 +6,16 @@ WORKDIR /app
 # Install basic utilities
 RUN apk add --no-cache git curl
 
-# Copy necessary files
+# Copy only what we need
 COPY go.mod go.sum ./
-COPY database ./database/
-COPY cmd/debug_main.go cmd/debug_app.go ./cmd/
-
-# Download dependencies
+COPY cmd/simple_debug.go ./cmd/
 RUN go mod download
 
-# Build the debug application
-RUN go build -o debug_app ./cmd
+# Build the simplified debug app
+RUN go build -o simple_debug ./cmd/simple_debug.go
 
-# Expose port
+# Expose port for healthcheck
 EXPOSE 8080
 
 # Run the app
-CMD ["./debug_app"] 
+CMD ["./simple_debug"] 
