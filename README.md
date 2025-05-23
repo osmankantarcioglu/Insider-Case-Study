@@ -2,6 +2,9 @@
 
 A full-stack football league simulation web application with Go backend and web frontend that allows users to simulate a football league season with realistic results.
 
+## Project Presentation Video Link
+https://drive.google.com/file/d/1_G153H82Ej8yU7IEBTKQc6IO9qV47I4g/view?usp=sharing
+
 ## Features
 
 - **League Simulation**: Simulate an entire season of football matches
