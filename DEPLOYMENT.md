@@ -1,104 +1,90 @@
-# Deployment Guide
+# Free Deployment Guide
 
-This guide will help you deploy the Football League Simulator application to Heroku using Docker.
+This guide will help you deploy the Football League Simulator application to Render.com for free.
 
-## Prerequisites
+## Option 1: Render.com (100% Free)
 
-1. [Heroku account](https://signup.heroku.com/) (free)
-2. [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli) installed
-3. [Git](https://git-scm.com/downloads) installed
+Render offers a completely free tier for both web services and PostgreSQL databases.
 
-## Deployment Steps
+### Steps:
 
-### 1. Login to Heroku
+1. Create a [Render account](https://render.com/register)
 
-```
-heroku login
-```
+2. Connect your GitHub repository to Render
 
-### 2. Create a new Heroku application
+3. Click "New" and select "Blueprint"
+   - Choose your repository
+   - Render will automatically detect the `render.yaml` file
 
-```
-heroku create football-league-sim
-```
+4. Review the settings and click "Apply"
+   - This will create both the web service and PostgreSQL database
+   - The database connection will be automatically configured
 
-Replace `football-league-sim` with your preferred application name.
+5. Wait for deployment to complete (5-10 minutes for the first deploy)
 
-### 3. Add a PostgreSQL database
+6. Access your application via the provided URL (e.g., `https://football-sim.onrender.com`)
 
-```
-heroku addons:create heroku-postgresql:mini
-```
+### Monitoring and Logs
 
-This will create a PostgreSQL database and automatically set the DATABASE_URL environment variable.
+- View logs: Go to your web service dashboard → Logs
+- Check database: Go to your database dashboard → Connect → View Connection Details
 
-### 4. Configure the application for Docker deployment
+### Limitations on Free Tier
 
-```
-heroku stack:set container
-```
+- Web services sleep after 15 minutes of inactivity
+  - They automatically wake up when receiving traffic
+  - First request after sleeping may be slow
+- PostgreSQL database has 1GB storage limit
 
-### 5. Deploy the application
+## Option 2: Fly.io (Free Tier)
 
-```
-git push heroku main
-```
+Fly.io also offers a generous free tier.
 
-Replace `main` with your branch name if different.
+### Prerequisites
 
-### 6. Open the application
+1. Install [flyctl](https://fly.io/docs/hands-on/install-flyctl/)
+2. Create a [Fly.io account](https://fly.io/app/sign-up)
 
-```
-heroku open
-```
+### Steps:
 
-## Troubleshooting
-
-### Check logs
-
-```
-heroku logs --tail
-```
-
-### Connect to the PostgreSQL database
-
-```
-heroku pg:psql
-```
-
-### Restart the application
-
-```
-heroku restart
-```
-
-## Manual Database Setup
-
-If you need to manually set up the database:
-
-1. Get the database connection details:
+1. Login to Fly
    ```
-   heroku pg:credentials:url
+   fly auth login
    ```
 
-2. Use these credentials to connect with a PostgreSQL client like pgAdmin or DBeaver.
+2. Launch the application
+   ```
+   fly launch
+   ```
+   - Follow the prompts
+   - When asked to deploy, say Yes
+   - It will detect the Dockerfile automatically
 
-## Updating the Application
+3. Create a PostgreSQL database
+   ```
+   fly postgres create
+   ```
 
-To update your application after making changes:
+4. Connect the database to your application
+   ```
+   fly postgres attach --app your-app-name your-db-name
+   ```
 
-```
-git add .
-git commit -m "Your commit message"
-git push heroku main
-```
+5. Deploy the application
+   ```
+   fly deploy
+   ```
 
-## Scaling the Application
+6. Open the application
+   ```
+   fly open
+   ```
 
-To scale the application:
+## Option 3: Free PaaS on Oracle Cloud (Always Free)
 
-```
-heroku ps:scale web=1
-```
+Oracle Cloud offers an "Always Free" tier that never expires.
 
-Replace `1` with the number of dynos you want to run. 
+1. Create an [Oracle Cloud account](https://www.oracle.com/cloud/free/)
+2. Create a VM instance using the Always Free tier
+3. SSH into the instance and set up Docker
+4. Deploy your application using Docker Compose 

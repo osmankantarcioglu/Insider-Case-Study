@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: football-sim
+    env: docker
+    plan: free
+    buildCommand: docker build -t football-sim .
+    startCommand: ./main
+    envVars:
+      - key: PORT
+        value: 8080
+
+databases:
+  - name: football-sim-db
+    plan: free
+    ipAllowList: [] 
