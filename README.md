@@ -1,22 +1,98 @@
 # Football League Simulator
 
-A football league simulation system built with Go that simulates match results and provides league table predictions.
+A full-stack football league simulation web application with Go backend and web frontend that allows users to simulate a football league season with realistic results.
 
 ## Features
 
-- 4-team football league simulation
-- Match simulation based on team strengths
-- League table with Premier League rules (points, goal difference, etc.)
-- Week-by-week match results
-- Prediction of final league standings after week 4
-- Edit match results and recalculate standings
-- Play all remaining matches in one go
+- **League Simulation**: Simulate an entire season of football matches
+- **Team Management**: View team statistics and performance
+- **Match Results**: Dynamic match simulation with realistic scores
+- **Championship Predictions**: Real-time win probability calculations
+- **Editable Scores**: Manual override of simulated match scores
 
-## Technology Stack
+## Tech Stack
 
-- **Backend**: Go with Fiber framework
-- **Database**: PostgreSQL
-- **Architecture**: Interface-based design with clean code principles
+- **Backend**: Go with Fiber web framework
+- **Database**: PostgreSQL 
+- **Frontend**: HTML, CSS, JavaScript
+- **Deployment**: Render.com (free tier)
+
+## Key Components
+
+- **Models**: Team, Match, League data structures
+- **Services**: Match simulation, table prediction
+- **Repositories**: Database interaction layer
+- **Handlers**: HTTP request processing
+- **Database**: PostgreSQL with SQL schema
+
+## Local Development
+
+### Prerequisites
+
+- Go 1.20+
+- PostgreSQL
+- Docker and Docker Compose (optional)
+
+### Run with Docker
+
+```bash
+# Start the application and database
+docker-compose up
+```
+
+### Run Locally
+
+1. Start PostgreSQL database
+2. Set environment variables:
+   ```
+   export DB_HOST=localhost
+   export DB_PORT=5432
+   export DB_USER=postgres
+   export DB_PASSWORD=postgres
+   export DB_NAME=footballsim
+   ```
+3. Run the application:
+   ```bash
+   go run ./cmd
+   ```
+
+4. Access the application at http://localhost:8080
+
+## Deployment
+
+The application is deployed on Render.com using the free tier:
+
+- Web service running Go application in Docker
+- PostgreSQL database for data storage
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for deployment instructions.
+
+## Project Structure
+
+```
+├── cmd/            # Application entry point
+├── database/       # Database interaction code
+│   └── sql_schema.sql
+├── handlers/       # HTTP request handlers
+├── models/         # Data models
+├── services/       # Business logic
+└── utils/
+    └── static/     # Frontend files
+```
+
+## Key Challenges Solved
+
+1. **Week Progression Issue**: Fixed the "Next Week" button to correctly advance the league simulation
+2. **UI Improvements**: Added dynamic match results display, score editing capabilities, and championship probability calculation
+3. **Database Integration**: Created proper repository pattern for database operations
+4. **Deployment**: Successfully deployed to Render.com with proper database configuration
+
+## Next Steps
+
+- Add user authentication
+- Implement team creation/editing
+- Add player management
+- Provide more detailed statistics
 
 ## API Endpoints
 
