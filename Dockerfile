@@ -1,33 +1,24 @@
-FROM golang:1.20-alpine AS builder
+FROM golang:1.20-alpine
 
 WORKDIR /app
 
+# Install dependencies
+RUN apk add --no-cache git
+
 # Copy go mod files
-COPY go.mod go.sum* ./
+COPY go.mod go.sum ./
+
+# Download dependencies
 RUN go mod download
 
 # Copy source code
 COPY . .
 
 # Build the application
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main ./cmd
-
-# Use a smaller image for the final application
-FROM alpine:latest
-
-WORKDIR /app
-
-# Install PostgreSQL client
-RUN apk --no-cache add postgresql-client
-
-# Copy the binary from the builder stage
-COPY --from=builder /app/main .
-
-# Copy the database schema
-COPY --from=builder /app/database/sql_schema.sql ./database/
+RUN go build -o main ./cmd
 
 # Expose port
 EXPOSE 8080
 
-# Command to run
+# Run the binary
 CMD ["./main"] 

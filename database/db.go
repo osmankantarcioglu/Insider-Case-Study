@@ -72,6 +72,7 @@ func NewDBConfig() *DBConfig {
 
 // ConnectDB establishes a connection to the database
 func ConnectDB(config *DBConfig) (*sql.DB, error) {
+	// If using direct connection string
 	if config.UseDirectURL {
 		log.Println("Connecting using direct database URL...")
 		// For direct URLs, we use sql.Open with the URL string directly

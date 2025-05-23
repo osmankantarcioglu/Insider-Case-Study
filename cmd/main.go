@@ -13,22 +13,19 @@ import (
 )
 
 func main() {
-	// Initialize database connection
+	// Initialize database connection using standard environment variables
 	var dbConfig *database.DBConfig
 	
-	// First explicitly check for DATABASE_URL as this is what Railway provides
+	// Check for DATABASE_URL environment variable
 	if dbURL := os.Getenv("DATABASE_URL"); dbURL != "" {
-		log.Println("Found DATABASE_URL environment variable, using for database connection")
+		log.Println("Using DATABASE_URL environment variable")
 		dbConfig = &database.DBConfig{
 			ConnectionString: dbURL,
 			UseDirectURL:     true,
 		}
-	} else if os.Getenv("RAILWAY_ENVIRONMENT") != "" || os.Getenv("PGHOST") != "" {
-		// If no DATABASE_URL but other Railway environment variables exist
-		log.Println("Railway environment detected, using Railway database configuration")
-		dbConfig = database.NewRailwayDBConfig()
 	} else {
-		// Fallback to standard config
+		// Use individual environment variables or defaults
+		log.Println("Using individual database environment variables")
 		dbConfig = database.NewDBConfig()
 	}
 	
@@ -84,7 +81,7 @@ func main() {
 		return c.SendString("Football League Simulator API - Use /api endpoints")
 	})
 
-	// Get port from environment variable for Railway deployment
+	// Get port from environment variable
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080" // Default port if not specified
