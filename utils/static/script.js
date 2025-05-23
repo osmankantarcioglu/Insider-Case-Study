@@ -16,7 +16,7 @@ const resetLeagueButton = document.getElementById('reset-league');
 // League data
 let currentLeague = null;
 let currentWeek = 0;
-let totalWeeks = 6;
+let totalWeeks = 18;
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
@@ -96,9 +96,88 @@ function updateUIControlsBasedOnLeagueStatus() {
         nextWeekButton.style.display = 'none';
         playAllButton.style.display = 'none';
         matchWeekHeader.textContent = `League Completed`;
+        
+        // If league is completed, display all matches by week
+        displayAllMatchesByWeek();
     } else {
         nextWeekButton.style.display = 'inline-block';
         playAllButton.style.display = 'inline-block';
+    }
+}
+
+// Function to display all matches by week when the league is completed
+async function displayAllMatchesByWeek() {
+    try {
+        matchResults.innerHTML = '<div class="loading">Loading match history...</div>';
+        
+        // Create container for all weeks
+        const allWeeksContainer = document.createElement('div');
+        allWeeksContainer.className = 'all-weeks-results';
+        
+        // Loop through all weeks and fetch matches
+        for (let week = 1; week <= totalWeeks; week++) {
+            const response = await fetch(`${API_BASE_URL}/matches/week/${week}`);
+            if (!response.ok) {
+                console.error(`Week ${week} matches response not OK:`, response.status, response.statusText);
+                continue; // Skip this week if there's an error
+            }
+            
+            const data = await response.json();
+            if (!data.matches || data.matches.length === 0) {
+                continue; // Skip if no matches
+            }
+            
+            // Create week section
+            const weekSection = document.createElement('div');
+            weekSection.className = 'week-section';
+            
+            // Add week header
+            const weekHeader = document.createElement('h3');
+            weekHeader.textContent = `Week ${week}`;
+            weekSection.appendChild(weekHeader);
+            
+            // Add matches for this week
+            const weekMatches = document.createElement('div');
+            weekMatches.className = 'week-matches';
+            
+            data.matches.forEach(match => {
+                if (!match.played) return; // Skip unplayed matches
+                
+                const matchElement = document.createElement('div');
+                matchElement.className = 'match-result';
+                
+                matchElement.innerHTML = `
+                    <div class="match-score">
+                        <span class="team-name">${match.home_team_name}</span>
+                        <span class="score-box">${match.home_team_goals}</span>
+                        <span class="separator">-</span>
+                        <span class="score-box">${match.away_team_goals}</span>
+                        <span class="team-name">${match.away_team_name}</span>
+                    </div>
+                `;
+                
+                weekMatches.appendChild(matchElement);
+            });
+            
+            weekSection.appendChild(weekMatches);
+            allWeeksContainer.appendChild(weekSection);
+        }
+        
+        // Clear previous content and add the full match history
+        matchResults.innerHTML = '';
+        
+        // Add a title for the section
+        const historyTitle = document.createElement('h2');
+        historyTitle.className = 'history-title';
+        historyTitle.textContent = 'Full Match History';
+        matchResults.appendChild(historyTitle);
+        
+        // Add the match history
+        matchResults.appendChild(allWeeksContainer);
+        
+    } catch (error) {
+        console.error('Error displaying all matches by week:', error);
+        matchResults.innerHTML = '<div class="error">Failed to load match history.</div>';
     }
 }
 
@@ -149,7 +228,7 @@ async function loadLeagueTable() {
         // If we got current week data from the table
         if (data.current_week) {
             currentWeek = data.current_week;
-            totalWeeks = data.total_weeks || 6;
+            totalWeeks = data.total_weeks || 18;
         }
         
     } catch (error) {

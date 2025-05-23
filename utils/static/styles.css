@@ -266,4 +266,80 @@ th:first-child, td:first-child {
 
 #matches-container {
     margin-bottom: 15px;
+}
+
+/* Match history styles */
+.all-weeks-results {
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    background-color: #f9f9f9;
+}
+
+.week-section {
+    margin-bottom: 20px;
+    border-bottom: 1px dashed #ccc;
+    padding-bottom: 15px;
+}
+
+.week-section h3 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #eee;
+}
+
+.week-matches {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.history-title {
+    text-align: center;
+    margin-bottom: 15px;
+    color: #2c3e50;
+    font-size: 22px;
+}
+
+.loading {
+    text-align: center;
+    padding: 20px;
+    color: #777;
+    font-style: italic;
+}
+
+.team-name {
+    font-weight: 500;
+    flex: 1;
+    text-align: center;
+    min-width: 120px;
+}
+
+.score-box {
+    background: #2c3e50;
+    color: white;
+    font-weight: bold;
+    padding: 3px 8px;
+    border-radius: 3px;
+    min-width: 20px;
+    text-align: center;
+    display: inline-block;
+}
+
+.separator {
+    margin: 0 5px;
+    color: #555;
+}
+
+.match-score {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    background: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 } 
